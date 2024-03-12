@@ -168,7 +168,7 @@ class Process(Step):
       total_width += self.tail.width + FLOW_SPACE
     return total_width 
 
-  def render(self, x=None, y=None, add_pool=True):
+  def render(self, x=None, y=None):
     # if we're called without positioning, we're adding diagram boilerplate
     wrap = x is None or y is None
     if wrap:
@@ -212,31 +212,21 @@ class Process(Step):
     # optinally wrap it all
     if wrap:
       process = flow.Process(id="process").extend(shapes).extend(flows)
-      if add_pool:
-        participant = Participant(self.name, process, id="participant")
-        # participant shapes the lane
-        participant.x = MODEL_OFFSET_X
-        participant.y = MODEL_OFFSET_Y
-        participant.width  = self.width + 50 + PADDING
-        participant.height = self.height
-        collaboration = Collaboration(id="collaboration").append(participant)
-        return Definitions(id="definitions").extend([
-          process,
-          collaboration,
-          Diagram(
-            id="diagram",
-            plane=Plane(id="plane", element=collaboration)
-          )
-        ])
-      else:
-        return Definitions(id="definitions").extend([
-          process,
-          Diagram(
-            id="diagram",
-            plane=Plane(id="plane")
-          )
-        ])
-
+      participant = Participant(self.name, process, id="participant")
+      # participant shapes the lane
+      participant.x = MODEL_OFFSET_X
+      participant.y = MODEL_OFFSET_Y
+      participant.width  = self.width + 50 + PADDING
+      participant.height = self.height
+      collaboration = Collaboration(id="collaboration").append(participant)
+      return Definitions(id="definitions").extend([
+        process,
+        collaboration,
+        Diagram(
+          id="diagram",
+          plane=Plane(id="plane", element=collaboration)
+        )
+      ])
     return (shapes, flows)
 
   @property
